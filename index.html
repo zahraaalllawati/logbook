@@ -140,10 +140,12 @@ textarea.input { height: auto; min-height: 86px; padding: 12px 16px; resize: ver
 .rrow { display: flex; flex-direction: column; gap: 7px; width: 100%; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; color: inherit; text-decoration: none; }
 .rrow:last-child { border-bottom: 0; }
 .rrow .proc-name { font-size: 18px; }
-.trow { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.trow { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; color: inherit; }
 .trow:last-child { border-bottom: 0; }
-.trow b { display: block; font-size: 17px; font-weight: 600; }
-.trow span { font-size: 15px; color: var(--soft); }
+.trow-l { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.trow-l b { font-size: 17px; font-weight: 600; line-height: 1.25; }
+.trow-l span { font-size: 15px; color: var(--soft); }
+.trow-more { display: flex; align-items: center; min-height: 48px; font-size: 16px; font-weight: 600; color: var(--teal); text-decoration: none; }
 .empty-row { padding: 14px 0; font-size: 16px; color: var(--soft); }
 .track { padding: 0 16px; }
 .track-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 64px; padding: 12px 0; border: 0; background: none; text-align: left; color: inherit; }
@@ -159,8 +161,6 @@ textarea.input { height: auto; min-height: 86px; padding: 12px 16px; resize: ver
 .tick .box svg { width: 18px; height: 18px; }
 .tick[aria-pressed="true"] .box { background: var(--teal); border-color: var(--teal); }
 .open { flex: none; min-height: 44px; display: flex; align-items: center; padding: 0 2px 0 8px; font-size: 15px; font-weight: 600; color: var(--teal); text-decoration: none; }
-.st-teach { background: #E6EEF8; color: #24508C; }
-.topic-other { margin-top: 8px; }
 
 /* ---------- log a procedure ---------- */
 .page { padding: calc(10px + env(safe-area-inset-top)) 20px 28px; display: flex; flex-direction: column; gap: 22px; }
@@ -191,7 +191,39 @@ legend { padding: 0; margin-bottom: 10px; font-size: 18px; font-weight: 700; }
 .cos-n.none { font-size: 19px; color: var(--ink); }
 .cos-w { font-size: 15px; line-height: 1.3; color: var(--soft); }
 .cos-btn { flex: none; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-size: 17px; font-weight: 600; color: var(--teal); }
-.form-end { display: flex; flex-direction: column; gap: 12px; }
+.form-end { position: sticky; bottom: 0; z-index: 5; margin: 0 -20px -28px; padding: 18px 20px calc(12px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px;
+  background: linear-gradient(to bottom, rgba(241, 246, 245, 0), var(--page) 18px); }
+.kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.kind { min-height: 84px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 8px; text-align: left; font-size: 18px; font-weight: 600; line-height: 1.15; color: var(--ink); }
+.kind svg { width: 28px; height: 28px; color: var(--teal); }
+.kind[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: var(--cream); }
+.kind[aria-pressed="true"] svg { color: var(--cream); }
+.rowpick { width: 100%; min-height: 66px; padding: 10px 12px 10px 16px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; color: var(--ink); }
+.rowpick.set { border-color: var(--teal); }
+.rowpick svg { width: 22px; height: 22px; flex: none; color: var(--soft); }
+.rp-l { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rp-l b { font-size: 19px; font-weight: 700; line-height: 1.2; color: var(--teal); overflow-wrap: anywhere; }
+.rp-l b.none { color: var(--ink); font-weight: 600; }
+.rp-l small { font-size: 15px; color: var(--soft); }
+.rp-l .rp-track { font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.rp-act { flex: none; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 12px; display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--teal); }
+.names { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.names .chip { padding: 6px 10px; }
+.add-note { font-size: 17px; }
+.tp-wrap { display: flex; flex-direction: column; gap: 12px; }
+.tp-list { display: flex; flex-direction: column; gap: 8px; }
+.tp { width: 100%; min-height: 54px; padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff; display: flex; flex-direction: column; justify-content: center; gap: 1px; text-align: left; color: var(--ink); }
+.tp b { font-size: 18px; font-weight: 600; line-height: 1.2; }
+.tp small { font-size: 14px; color: var(--soft); }
+.tp[aria-pressed="true"] { border-color: var(--teal); background: var(--mint); }
+.tp-track { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
+.tp-track svg { width: 20px; height: 20px; flex: none; color: var(--soft); }
+.tp-l { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.tp-other { border-style: dashed; border-color: var(--dash); background: var(--tint); }
+.tp-other b { color: var(--teal); }
+.tp-h { margin: 2px 2px 0; font-size: 20px; font-weight: 700; color: var(--ink); }
+.tp-back { margin-bottom: -4px; }
+.tp-own { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; background: var(--page); }
 
 /* ---------- my log ---------- */
 .mylog { padding: calc(20px + env(safe-area-inset-top)) 16px 0; display: flex; flex-direction: column; gap: 8px; }
@@ -269,6 +301,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
 .mini p, .mini li { font-size: 16px; line-height: 1.35; }
 .mini li { display: flex; justify-content: space-between; gap: 10px; }
 .mini li b.n { color: var(--amber-ink); }
+.mini li .st { align-self: center; }
 .loading { padding: 40px 16px; text-align: center; color: var(--soft); font-size: 18px; }
 @media (min-width: 760px) {
   .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -490,7 +523,12 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
     check: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     done: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#0B4F53"/><path d="M7 12.5 L10.5 16 L17 8.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    close: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+    close: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    next: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    talk: '<svg viewBox="0 0 24 24"><path d="M5 4h8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9.5L6 16.5V13H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 8H19a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3.5L14.5 17H11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    bed: '<svg viewBox="0 0 24 24"><path d="M3 5.5V19M3 15h18v4M21 15v-2.5A2.5 2.5 0 0 0 18.5 10H11v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="11.5" r="2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    board: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 16v4M8.5 20h7M7 8.5h7M7 11.5h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    more: '<svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="18.5" cy="12" r="1.9" fill="currentColor"/></svg>'
   };
 
   function route() {
@@ -764,23 +802,37 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     });
   }
 
-  // ---------------------------------------------------------- teaching received
+  // ---------------------------------------------------------- teaching received (co-signed by the doctor who gave it)
+
+  var KINDS = [['Discussion', 'talk'], ['Bedside round', 'bed'], ['Didactic teaching', 'board'], ['Other', 'more']];
+  var TST = { wait: 'Waiting', ok: 'Co-signed', back: 'Returned', logged: 'Co-signed' };
+  function tst(t) { return t.st && TST[t.st] ? t.st : 'ok'; }
+
+  function teachList() {
+    return (S.data.teaching || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.at || 0) - (a.at || 0); });
+  }
 
   function teachingSection() {
-    var list = (S.data.teaching || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.at || 0) - (a.at || 0); });
+    var list = teachList();
+    var signed = list.filter(function (t) { return tst(t) === 'ok'; }).length, waiting = list.filter(function (t) { return tst(t) === 'wait'; }).length;
     var rows = list.slice(0, 3).map(function (t) {
-      return h('div', { class: 'trow' }, [h('b', { text: t.topic }), h('span', { text: dr(t.by) + ' · ' + t.type + ' · ' + dShort(t.date) })]);
+      var st = tst(t);
+      return h('button', { class: 'trow', type: 'button', onclick: function () { S.sheet = { kind: 'teaching', id: t.id }; drawSheet(); } }, [
+        h('span', { class: 'trow-l' }, [h('b', { text: t.topic }), h('span', { text: dr(t.by) + ' · ' + t.type + ' · ' + dShort(t.date) })]),
+        h('span', { class: 'st st-' + st, text: TST[st] })
+      ]);
     });
-    if (!rows.length) rows.push(h('p', { class: 'empty-row', text: 'Nothing yet. After a teaching session or discussion, tap Add teaching.' }));
+    if (!rows.length) rows.push(h('p', { class: 'empty-row', text: 'Nothing yet. After a teaching session, tap Add teaching. The doctor who taught you co-signs it.' }));
+    if (list.length > 3) rows.push(h('a', { class: 'trow-more', href: '#mylog' }, 'All ' + list.length + ' in My log'));
     return h('section', { class: 'sec wrap' }, [
-      h('div', { class: 'sec-head' }, [h('h2', { text: 'Teaching received' }), list.length > 3 ? h('a', { class: 'link-sm', href: '#mylog' }, 'All ' + list.length) : h('span', { class: 'legend', text: list.length ? list.length + (list.length === 1 ? ' session' : ' sessions') : '' })]),
+      h('div', { class: 'sec-head' }, [h('h2', { text: 'Teaching received' }), h('span', { class: 'legend', text: list.length ? signed + ' co-signed' + (waiting ? ' · ' + waiting + ' waiting' : '') : '' })]),
       h('div', { class: 'card rows' }, rows)
     ]);
   }
 
   function newTeach() {
     var me = S.data.me, today = nowM().key;
-    return { date: today > me.end ? me.end : today < me.start ? me.start : today, track: '', topic: '', other: false, type: '', by: '', note: '', nonce: nonce() };
+    return { date: today > me.end ? me.end : today < me.start ? me.start : today, type: '', track: '', topic: '', own: false, by: '', note: '', noteOpen: false, nonce: nonce() };
   }
 
   function vTeach() {
@@ -790,58 +842,118 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     var head = h('div', { class: 'page-head' }, [
       h('a', { class: 'link-btn', href: '#', onclick: function (ev) { ev.preventDefault(); history.back(); } }, [icon('back'), 'Back']),
       h('h1', { text: 'Add teaching' }),
-      h('p', { class: 'page-sub', text: 'A teaching session or discussion you received.' })
+      h('p', { class: 'page-sub', text: 'The doctor who taught you co-signs it.' })
     ]);
     if (today < me.start) return h('main', { class: 'page wrap' }, [head, h('p', { class: 'empty', text: 'You can add teaching from ' + dLong(me.start) + ', the first day of your block.' })]);
+
+    var kindSet = h('fieldset', null, [h('legend', { text: 'What kind?' }), h('div', { class: 'kinds' }, KINDS.map(function (k) {
+      var on = f.type === k[0];
+      return h('button', { type: 'button', class: 'kind', 'aria-pressed': on ? 'true' : 'false', onclick: function () {
+        f.type = k[0];
+        if (k[0] === 'Other') f.noteOpen = true;
+        S.error = ''; render();
+      } }, [icon(k[1]), h('span', { text: k[0] })]);
+    }))]);
+
+    var topicSet = h('div', { class: 'field' }, [
+      h('span', { class: 'label', id: 'topic-label', text: 'Topic' }),
+      h('button', { type: 'button', class: 'rowpick' + (f.topic ? ' set' : ''), 'aria-labelledby': 'topic-label topic-now', onclick: function () {
+        S.sheet = { kind: 'topic', track: f.own ? f.track : '', q: '', own: f.own ? f.topic : '', ownOpen: !!f.own }; drawSheet();
+      } }, f.topic
+        ? [h('span', { class: 'rp-l', id: 'topic-now' }, [h('small', { class: 'rp-track', text: f.track }), h('b', { text: f.topic })]), h('span', { class: 'rp-act', text: 'Change' })]
+        : [h('span', { class: 'rp-l', id: 'topic-now' }, [h('b', { class: 'none', text: 'Choose the topic' }), h('small', { text: 'From the picuhub.om list' })]), icon('next')])
+    ]);
+
+    var names = d.teachers || [];
+    var bySet = h('fieldset', null, [h('legend', { text: 'Who taught you?' }), names.length ? h('div', { class: 'names' }, names.map(function (n) {
+      var on = f.by === n;
+      return h('button', { type: 'button', class: 'chip', 'aria-pressed': on ? 'true' : 'false', onclick: function () { f.by = n; S.error = ''; render(); } }, [dr(n), on ? icon('check') : null]);
+    })) : h('p', { class: 'hint', text: 'No doctors are listed yet. Ask ' + cfg.contact + '.' })]);
+
     var last = me.end < today ? me.end : today;
     var dateIn = h('input', { id: 'teach-date', type: 'date', min: me.start, max: last, value: f.date, 'aria-label': 'Date, ' + dLong(f.date) });
     dateIn.onchange = function () { var v = dateIn.value; if (/^\d{4}-\d{2}-\d{2}$/.test(v) && v >= me.start && v <= last) f.date = v; render(); };
-    var tr = (d.reading || []).filter(function (t) { return t.name === f.track; })[0];
-    var topicSet = null;
-    if (tr) {
-      var otherIn = h('input', { class: 'input topic-other', id: 'teach-other', type: 'text', maxlength: '120', placeholder: 'Type the topic', value: f.other ? f.topic : '' });
-      otherIn.oninput = function () { f.topic = otherIn.value; };
-      topicSet = h('fieldset', null, [h('legend', { text: 'Topic' }), h('div', { class: 'pick' }, tr.modules.map(function (m) {
-        return h('button', { type: 'button', 'aria-pressed': !f.other && f.topic === m.name ? 'true' : 'false', onclick: function () { f.topic = m.name; f.other = false; render(); } }, m.name);
-      }).concat([h('button', { type: 'button', 'aria-pressed': f.other ? 'true' : 'false', onclick: function () { if (!f.other) { f.other = true; f.topic = ''; } render(); setTimeout(function () { var x = document.getElementById('teach-other'); if (x) x.focus(); }, 30); } }, 'Another topic')])),
-        f.other ? otherIn : null]);
-    }
-    var bySet = h('div', { class: 'field' }, [
-      h('span', { class: 'label', text: 'Given by' }),
-      h('div', { class: 'cos' }, [
-        h('div', null, f.by ? [h('div', { class: 'cos-n', text: dr(f.by) })] : [h('div', { class: 'cos-n none', text: 'Who gave it?' }), h('div', { class: 'cos-w', text: 'The doctor who taught or led the discussion.' })]),
-        h('button', { class: 'cos-btn', type: 'button', onclick: function () { S.sheet = { kind: 'teacher' }; drawSheet(); } }, f.by ? 'Change' : 'Choose')
-      ])
-    ]);
-    var noteIn = h('textarea', { class: 'input', id: 'teach-note', rows: '2', maxlength: '300', placeholder: 'Anything to add', 'aria-describedby': 'teach-help' });
-    noteIn.value = f.note;
-    noteIn.oninput = function () { f.note = noteIn.value; };
-    var ready = !!(f.track && String(f.topic).trim() && f.type && f.by);
+    var dateSet = h('div', { class: 'field' }, [h('label', { class: 'label', for: 'teach-date', text: 'Date' }),
+      h('div', { class: 'date-box' }, [h('div', { class: 'date-face', 'aria-hidden': 'true' }, [h('span', { text: dLong(f.date) }), f.date === today ? h('span', { class: 'pill', text: 'Today' }) : f.date === addDays(today, -1) ? h('span', { class: 'pill', text: 'Yesterday' }) : null]), dateIn])]);
+
+    var noteSet;
+    if (f.noteOpen || f.note) {
+      var noteIn = h('textarea', { class: 'input', id: 'teach-note', rows: '2', maxlength: '300', placeholder: f.type === 'Other' ? 'Say what kind of teaching it was' : 'Anything to add', 'aria-describedby': 'teach-help' });
+      noteIn.value = f.note;
+      noteIn.oninput = function () { f.note = noteIn.value; };
+      noteSet = h('div', { class: 'field' }, [h('label', { class: 'label', for: 'teach-note' }, [f.type === 'Other' ? 'What kind of teaching? ' : 'Note ', h('small', { text: '(optional)' })]), noteIn,
+        h('p', { class: 'hint', id: 'teach-help', style: 'margin-top:0', text: 'No patient names or hospital numbers.' })]);
+    } else noteSet = h('button', { class: 'link-btn add-note', type: 'button', onclick: function () { f.noteOpen = true; render(); setTimeout(function () { var x = document.getElementById('teach-note'); if (x) try { x.focus(); } catch (e) {} }, 30); } }, [icon('plus'), 'Add a note']);
+
+    var ready = !!(f.type && String(f.topic).trim() && f.by);
+    var label = !f.type ? 'Choose the kind of teaching' : !String(f.topic).trim() ? 'Choose the topic' : !f.by ? 'Choose who taught you' : 'Send to ' + dr(f.by) + ' to co-sign';
     return h('main', { class: 'wrap' }, [h('form', { class: 'page', novalidate: true, onsubmit: function (ev) { ev.preventDefault(); sendTeach(); } }, [
-      head,
-      h('div', { class: 'field' }, [h('label', { class: 'label', for: 'teach-date', text: 'Date' }),
-        h('div', { class: 'date-box' }, [h('div', { class: 'date-face', 'aria-hidden': 'true' }, [h('span', { text: dLong(f.date) }), f.date === today ? h('span', { class: 'pill', text: 'Today' }) : null]), dateIn])]),
-      h('fieldset', null, [h('legend', { text: 'Track' }), h('div', { class: 'chips' }, (d.reading || []).map(function (t) {
-        var on = f.track === t.name;
-        return h('button', { type: 'button', class: 'chip', 'aria-pressed': on ? 'true' : 'false', onclick: function () { if (f.track !== t.name) { f.track = t.name; f.topic = ''; f.other = false; } render(); } }, [t.name, on ? icon('check') : null]);
-      }))]),
-      topicSet,
-      seg('Type', f.type, [['Didactic teaching', 'Didactic teaching'], ['Discussion', 'Discussion']], function (v) { f.type = v; }),
-      bySet,
-      h('div', { class: 'field' }, [h('label', { class: 'label', for: 'teach-note' }, ['Note ', h('small', { text: '(optional)' })]), noteIn, h('p', { class: 'hint', id: 'teach-help', style: 'margin-top:0', text: 'No patient names or hospital numbers.' })]),
+      head, kindSet, topicSet, bySet, dateSet, noteSet,
       h('div', { class: 'form-end' }, [S.error ? h('p', { class: 'err', role: 'alert', text: S.error }) : null,
-        h('button', { class: 'btn', type: 'submit', disabled: !ready || S.busy }, S.busy ? 'Saving…' : 'Save teaching')])
+        h('button', { class: 'btn', type: 'submit', disabled: !ready || S.busy }, S.busy ? 'Sending…' : label)])
     ])]);
+  }
+
+  /** The topic: the picuhub.om tracks, one tap to open a track and one to choose; or search; or the resident's own words in a track. */
+  function sheetTopic() {
+    var f = S.tform, sh = S.sheet;
+    if (!f) return null;
+    var tracks = S.data.reading || [];
+    var pick = function (track, topic, own) { f.track = track; f.topic = topic; f.own = !!own; S.error = ''; S.sheet = null; drawSheet(); render(); };
+    var list = h('div', { class: 'tp-list' });
+    var trackRows = function () {
+      return tracks.map(function (t) {
+        var here = f.track === t.name && f.topic;
+        return h('button', { type: 'button', class: 'tp tp-track', onclick: function () { sh.track = t.name; sh.q = ''; sh.ownOpen = false; drawSheet(); } }, [
+          h('span', { class: 'tp-l' }, [h('b', { text: t.name }), h('small', { text: t.modules.length + (t.modules.length === 1 ? ' topic' : ' topics') + (here ? ' · your choice is here' : '') })]), icon('next')]);
+      });
+    };
+    var fill = function () {
+      clear(list);
+      var q = String(sh.q || '').trim().toLowerCase();
+      if (q) {
+        var hits = [];
+        tracks.forEach(function (t) { t.modules.forEach(function (m) { if ((m.name + ' ' + t.name).toLowerCase().indexOf(q) >= 0) hits.push([t.name, m.name]); }); });
+        hits.slice(0, 40).forEach(function (x) {
+          list.appendChild(h('button', { type: 'button', class: 'tp', 'aria-pressed': f.track === x[0] && f.topic === x[1] ? 'true' : 'false', onclick: function () { pick(x[0], x[1], false); } }, [h('b', { text: x[1] }), h('small', { text: x[0] })]));
+        });
+        if (!hits.length) {
+          list.appendChild(h('p', { class: 'note', text: 'No topic matches. Open the track it belongs to and add it in your own words.' }));
+          add(list, trackRows());
+        }
+        return;
+      }
+      var t = tracks.filter(function (x) { return x.name === sh.track; })[0];
+      if (!t) { add(list, trackRows()); return; }
+      list.appendChild(h('button', { type: 'button', class: 'link-btn tp-back', onclick: function () { sh.track = ''; sh.ownOpen = false; drawSheet(); } }, [icon('back'), 'All tracks']));
+      list.appendChild(h('h3', { class: 'tp-h', text: t.name }));
+      t.modules.forEach(function (m) {
+        list.appendChild(h('button', { type: 'button', class: 'tp', 'aria-pressed': !f.own && f.track === t.name && f.topic === m.name ? 'true' : 'false', onclick: function () { pick(t.name, m.name, false); } }, [h('b', { text: m.name })]));
+      });
+      if (!sh.ownOpen) {
+        list.appendChild(h('button', { type: 'button', class: 'tp tp-other', onclick: function () { sh.ownOpen = true; fill(); setTimeout(function () { var x = document.getElementById('own-topic'); if (!x) return; try { x.focus({ preventScroll: true }); x.parentNode.scrollIntoView({ block: 'end', behavior: 'smooth' }); } catch (e) { try { x.focus(); } catch (e2) {} } }, 30); } }, [h('b', { text: 'Another ' + t.name + ' topic' }), h('small', { text: 'Type it in your own words' })]));
+        return;
+      }
+      var use = h('button', { class: 'btn', type: 'button', disabled: !String(sh.own || '').trim(), onclick: function () { var v = String(sh.own || '').trim(); if (v) pick(t.name, v, true); } }, 'Use this topic');
+      var own = h('input', { class: 'input', id: 'own-topic', type: 'text', maxlength: '120', placeholder: 'The topic', value: sh.own || '', 'aria-label': 'Another ' + t.name + ' topic', enterkeyhint: 'done' });
+      own.oninput = function () { sh.own = own.value; use.disabled = !String(own.value).trim(); };
+      own.onkeydown = function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); use.click(); } };
+      list.appendChild(h('div', { class: 'tp-own' }, [h('label', { class: 'label', for: 'own-topic', text: 'Another ' + t.name + ' topic' }), own, use]));
+    };
+    var search = h('input', { class: 'input', type: 'search', placeholder: 'Search the topics', 'aria-label': 'Search the topics', value: sh.q || '', autocomplete: 'off', enterkeyhint: 'search' });
+    search.oninput = function () { sh.q = search.value; if (sh.q) sh.track = ''; fill(); };
+    fill();
+    return { title: 'Topic', content: h('div', { class: 'tp-wrap' }, [search, list]) };
   }
 
   function sendTeach() {
     var f = S.tform;
-    if (!f || S.busy) return;
+    if (!f || S.busy || !f.type || !String(f.topic).trim() || !f.by) return;
     if (/\d{5,}/.test(String(f.topic + f.note).replace(/[\s\-\/.]/g, ''))) { S.error = 'Take the number out. No hospital numbers or patient details, please.'; render(); return; }
     S.busy = true; S.error = ''; render();
     call('teach', { entry: { date: f.date, track: f.track, topic: String(f.topic).trim(), type: f.type, by: f.by, note: f.note }, nonce: f.nonce }).then(function (r) {
       S.busy = false;
-      if (r.ok) { took(r); S.flash = { title: 'Teaching saved', text: String(f.topic).trim() + ' · ' + dr(f.by) }; S.tform = null; location.hash = 'mylog'; render(); }
+      if (r.ok) { took(r); S.flash = { title: 'Sent to ' + dr(f.by) + ' to co-sign', text: String(f.topic).trim() + '. It counts once ' + dr(f.by) + ' co-signs.' }; S.tform = null; location.hash = 'mylog'; render(); }
       else if (r.error === 'signed_out') signedOut(r.message);
       else { S.error = r.message || NET; render(); }
     });
@@ -997,11 +1109,13 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     list.forEach(function (e) {
       if (e.date !== day) { day = e.date; kids.push(h('h2', { class: 'day-h', text: dShort(day) })); }
       if (e.kind === 'teach') {
+        var st = tst(e.t);
         kids.push(h('button', { class: 'item', type: 'button', onclick: function () { S.sheet = { kind: 'teaching', id: e.id }; drawSheet(); } }, [
           h('span', { class: 'item-row' }, [
-            h('span', { class: 'item-l' }, [h('span', { class: 'item-name', text: e.t.topic }), h('span', { class: 'item-sub', text: e.t.track + ' · ' + e.t.type })]),
-            h('span', { class: 'st st-teach', text: 'Teaching · ' + dr(e.t.by) })
-          ])
+            h('span', { class: 'item-l' }, [h('span', { class: 'item-name', text: e.t.topic }), h('span', { class: 'item-sub', text: 'Teaching · ' + e.t.type })]),
+            h('span', { class: 'st st-' + st, text: TST[st] + ' · ' + dr(e.t.by) })
+          ]),
+          st === 'back' && e.t.why ? h('span', { class: 'quote', text: '“' + e.t.why + '”' }) : null
         ]));
         return;
       }
@@ -1024,7 +1138,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     var root = document.getElementById('sheet');
     clear(root);
     if (!S.sheet || !S.data) return;
-    var body = S.sheet.kind === 'account' ? sheetAccount() : S.sheet.kind === 'cosigner' ? sheetCosigner() : S.sheet.kind === 'teacher' ? sheetTeacher() : S.sheet.kind === 'teaching' ? sheetTeaching() : sheetEntry();
+    var body = S.sheet.kind === 'account' ? sheetAccount() : S.sheet.kind === 'cosigner' ? sheetCosigner() : S.sheet.kind === 'topic' ? sheetTopic() : S.sheet.kind === 'teaching' ? sheetTeaching() : sheetEntry();
     if (!body) { S.sheet = null; return; }
     var close = function () { S.sheet = null; drawSheet(); };
     var scrim = h('div', { class: 'scrim', onclick: function (ev) { if (ev.target === scrim) close(); } }, [
@@ -1067,36 +1181,31 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     return { title: 'Who was on service?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [h('p', { class: 'note', text: 'The doctor on service co-signs. By day that is the unit’s lead for the week, on call the 4th on call.' }), list]) };
   }
 
-  function sheetTeacher() {
-    var f = S.tform;
-    if (!f) return null;
-    var list = h('div', { class: 'pick' }, (S.data.teachers || []).map(function (n) {
-      return h('button', { type: 'button', 'aria-pressed': n === f.by ? 'true' : 'false', onclick: function () { f.by = n; S.sheet = null; drawSheet(); render(); } }, dr(n));
-    }));
-    return { title: 'Who gave it?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [list]) };
-  }
-
   function sheetTeaching() {
     var t = (S.data.teaching || []).filter(function (x) { return x.id === S.sheet.id; })[0];
     if (!t) return null;
-    var facts = [['Topic', t.topic], ['Track', t.track], ['Type', t.type], ['Given by', dr(t.by)], ['Date', dLong(t.date)]];
+    var st = tst(t);
+    var facts = [['Topic', t.topic], ['Track', t.track], ['Kind', t.type], ['Taught by', dr(t.by)], ['Date', dLong(t.date)], ['Status', TST[st]]];
     if (t.note) facts.push(['Note', t.note]);
+    if (st === 'back' && t.why) facts.push(['Returned', '“' + t.why + '”']);
     var kids = [h('dl', { class: 'facts' }, facts.map(function (x) { return [h('dt', { text: x[0] }), h('dd', { text: x[1] })]; }))];
-    if (S.sheet.confirm) {
-      kids.push(h('p', { style: 'font-size:17px', text: 'Withdraw it? It comes out of your log.' }));
-      kids.push(h('div', { class: 'row-btns' }, [
-        h('button', { class: 'btn btn-danger', type: 'button', disabled: S.busy, onclick: function () {
-          S.busy = true; drawSheet();
-          call('unteach', { id: t.id }).then(function (r) {
-            S.busy = false;
-            if (r.ok) { took(r); S.sheet = null; S.flash = { title: 'Withdrawn', text: t.topic + ' is out of your log.' }; render(); }
-            else if (r.error === 'signed_out') signedOut(r.message);
-            else { S.sheet.error = r.message || NET; drawSheet(); }
-          });
-        } }, S.busy ? 'Withdrawing…' : 'Withdraw'),
-        h('button', { class: 'btn btn-line', type: 'button', onclick: function () { S.sheet.confirm = false; drawSheet(); } }, 'Keep it')
-      ]));
-    } else kids.push(h('button', { class: 'btn btn-danger', type: 'button', onclick: function () { S.sheet.confirm = true; drawSheet(); } }, 'Withdraw this entry'));
+    if (st === 'wait') {
+      if (S.sheet.confirm) {
+        kids.push(h('p', { style: 'font-size:17px', text: 'Withdraw it? It comes out of your log and ' + dr(t.by) + ' will not need to co-sign it.' }));
+        kids.push(h('div', { class: 'row-btns' }, [
+          h('button', { class: 'btn btn-danger', type: 'button', disabled: S.busy, onclick: function () {
+            S.busy = true; drawSheet();
+            call('unteach', { id: t.id }).then(function (r) {
+              S.busy = false;
+              if (r.ok) { took(r); S.sheet = null; S.flash = { title: 'Withdrawn', text: t.topic + ' is out of your log.' }; render(); }
+              else if (r.error === 'signed_out') signedOut(r.message);
+              else { S.sheet.error = r.message || NET; drawSheet(); }
+            });
+          } }, S.busy ? 'Withdrawing…' : 'Withdraw'),
+          h('button', { class: 'btn btn-line', type: 'button', onclick: function () { S.sheet.confirm = false; drawSheet(); } }, 'Keep it')
+        ]));
+      } else kids.push(h('button', { class: 'btn btn-danger', type: 'button', onclick: function () { S.sheet.confirm = true; drawSheet(); } }, 'Withdraw this entry'));
+    } else if (st === 'back') kids.push(h('p', { class: 'note', text: 'It does not count. If it needs putting right, add it again.' }));
     if (S.sheet.error) kids.push(h('p', { class: 'err', role: 'alert', text: S.sheet.error }));
     return { title: 'Teaching', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, kids) };
   }
@@ -1212,18 +1321,19 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     if (L.tracks.length && t.residents.length) body.appendChild(h('section', { class: 'card panel' }, [
       h('h2', { text: 'Reading on picuhub.om, against each target' }),
       h('div', { class: 'table-box' }, [h('table', { class: 't' }, [
-        h('thead', null, [h('tr', null, [h('th', { text: 'Resident' })].concat(L.tracks.map(function (k) { return h('th', { text: k.name }); })).concat([h('th', { text: 'Targets met' }), h('th', { text: 'Teaching' })]))]),
+        h('thead', null, [h('tr', null, [h('th', { text: 'Resident' })].concat(L.tracks.map(function (k) { return h('th', { text: k.name }); })).concat([h('th', { text: 'Targets met' }), h('th', { text: 'Teaching co-signed' })]))]),
         h('tbody', null, L.list.map(function (r) {
           return h('tr', null, [h('td', null, [h('b', { text: r.name })])].concat(L.tracks.map(function (k) {
             var n = r.read[k.name] || 0;
             return h('td', null, k.need && n >= k.need ? h('span', { class: 'met', text: n + ' / ' + k.total }) : h('span', { class: n ? '' : 'zero', text: n + ' / ' + k.total }));
-          })).concat([h('td', { class: 'tot', text: r.met + ' / ' + L.tracks.filter(function (k) { return k.need; }).length }), h('td', { text: String(r.teach) })]));
+          })).concat([h('td', { class: 'tot', text: r.met + ' / ' + L.tracks.filter(function (k) { return k.need; }).length }), h('td', { class: r.teach ? '' : 'zero' }, [String(r.teach || 0), r.twait ? h('span', { class: 'w', text: ' +' + r.twait + ' waiting' }) : null])]));
         }))
       ])]),
       h('p', { class: 'note', style: 'padding:8px 16px 4px', text: 'Targets: ' + L.tracks.filter(function (k) { return k.need; }).map(function (k) { return k.name + ' ' + k.need + ' of ' + k.total; }).join(', ') + '.' })
     ]));
     if (L.teaching.length) body.appendChild(h('section', { class: 'card mini' }, [h('h2', { text: 'Teaching received' }), h('ul', null, L.teaching.slice(0, 40).map(function (x) {
-      return h('li', null, [h('span', null, [h('b', { text: x.name.split(' ')[0] }), ' · ' + x.topic + ' · ' + dr(x.by) + ', ' + x.type.toLowerCase() + ', ' + dShort(x.date)])]);
+      var st = tst(x);
+      return h('li', null, [h('span', null, [h('b', { text: x.name.split(' ')[0] }), ' · ' + x.topic + ' · ' + dr(x.by) + ', ' + x.type.toLowerCase() + ', ' + dShort(x.date)]), st === 'ok' ? null : h('span', { class: 'st st-' + st, text: TST[st] })]);
     }))]));
     body.appendChild(h('div', { class: 'cards3' }, [
       h('section', { class: 'card mini' }, [h('h2', { text: 'Waiting for co-sign' }), waitList]),
