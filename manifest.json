@@ -1,0 +1,36 @@
+{
+  "name": "PICU Logbook",
+  "short_name": "PICU Logbook",
+  "description": "Your procedures, reading and teaching in PICU and HDU.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F1F6F5",
+  "theme_color": "#0F5E63",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://zahraaalllawati.github.io/logbook/manifest.json"
+    }
+  ]
+}
