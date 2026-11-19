@@ -281,6 +281,13 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   .ring { width: 80px; height: 80px; }
   .hero h1 { font-size: 27px; }
 }
+.practice { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between;
+  padding: calc(8px + env(safe-area-inset-top)) 14px 8px; background: var(--amber-bg); color: #5C3D00; font-size: 15px; line-height: 1.3; box-shadow: 0 1px 0 rgba(0,0,0,.06); }
+.practice b { font-weight: 700; }
+.practice .pb { display: flex; gap: 8px; }
+.practice button { border: 0; border-radius: 9px; min-height: 36px; padding: 0 12px; font-weight: 600; font-size: 15px; }
+.practice .p-back { background: var(--ink); color: #fff; }
+.practice .p-clear { background: #fff; color: #5C3D00; box-shadow: inset 0 0 0 1.5px #E2C89A; }
 </style>
 </head>
 <body>
@@ -304,7 +311,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   // script over the web.
   var canRun = !!(window.google && google.script && google.script.run);
   var api = canRun ? '' : String(boot.api || '');
-  var KEY = { token: 'picu-logbook.token.v1', data: 'picu-logbook.data.v1', email: 'picu-logbook.email.v1' };
+  var KEY = { token: 'picu-logbook.token.v1', data: 'picu-logbook.data.v1', email: 'picu-logbook.email.v1', admin: 'picu-logbook.admin.v1' };
   var NET = 'Could not reach the logbook. Check your signal and try again.';
 
   function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
@@ -364,10 +371,59 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
 
   function signedOut(message) {
     S.token = ''; S.data = null; S.tracker = null; S.form = null; S.sheet = null; S.flash = null;
-    save(KEY.token, ''); save(KEY.data, '');
+    save(KEY.token, ''); save(KEY.data, ''); save(KEY.admin, '');
     S.step = 'email'; S.error = message || ''; S.busy = false;
     if (location.hash) history.replaceState(null, '', location.pathname + location.search);
     render();
+  }
+
+  // ---------------------------------------------------------- practice: the supervisor tries the resident screens
+  function practising() { return !!(S.data && S.data.me && S.data.me.practice); }
+  function startPractice() {
+    if (S.busy) return;
+    S.busy = true; S.tNote = ''; S.tError = '';
+    render();
+    call('practice').then(function (r) {
+      S.busy = false;
+      if (r.ok && r.token) {
+        save(KEY.admin, S.token);
+        took(r);
+        S.sheet = null; S.flash = null;
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      } else if (r.error === 'signed_out') { signedOut(r.message); return; }
+      else S.tError = r.message || NET;
+      render();
+    });
+  }
+  function endPractice() {
+    var t = load(KEY.admin);
+    save(KEY.admin, '');
+    if (!t) { signedOut(''); return; }
+    S.token = t; save(KEY.token, t);
+    S.data = null; save(KEY.data, '');
+    S.sheet = null; S.flash = null; S.form = null; S.tform = null; S.tracker = null;
+    location.hash = 'tracker';
+    refresh(false);
+    render();
+  }
+  function clearPractice() {
+    if (S.busy) return;
+    S.busy = true;
+    call('practiceclear').then(function (r) {
+      S.busy = false;
+      if (r.ok) { took(r); S.flash = { title: 'Practice cleared', text: 'Everything you logged in practice is withdrawn.' }; location.hash = 'mylog'; }
+      else if (r.error === 'signed_out') { signedOut(r.message); return; }
+      render();
+    });
+  }
+  function practiceBar() {
+    return h('div', { class: 'practice', role: 'status' }, [
+      h('span', null, [h('b', { text: 'Practice. ' }), h('span', { text: 'This is what residents see. Co-sign emails come to you; nothing counts.' })]),
+      h('span', { class: 'pb' }, [
+        h('button', { class: 'p-clear', type: 'button', disabled: S.busy, onclick: clearPractice }, 'Clear practice'),
+        h('button', { class: 'p-back', type: 'button', onclick: endPractice }, 'Back to the tracker')
+      ])
+    ]);
   }
 
   function refresh(quiet) {
@@ -453,6 +509,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     var v = route(), app = document.getElementById('app');
     var same = v === S.seen, y = window.pageYOffset;
     clear(app);
+    if (practising() && v !== 'tracker' && v !== 'signin' && v !== 'code') app.appendChild(practiceBar());
     app.appendChild(VIEWS[v]());
     drawSheet();
     document.title = cfg.title + (TITLES[v] ? ': ' + TITLES[v] : '');
@@ -987,7 +1044,9 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     var facts = [['Name', dr(me.short)], ['Email', me.email]];
     if (me.block) facts.push(['Block', 'Block ' + me.block + ', ' + dLong(me.start) + ' to ' + dLong(me.end)]);
     var kids = [h('dl', { class: 'facts' }, facts.map(function (f) { return [h('dt', { text: f[0] }), h('dd', { text: f[1] })]; }))];
-    if (me.admin && me.block) kids.push(h('a', { class: 'btn btn-line', href: '#tracker', onclick: function () { S.sheet = null; drawSheet(); } }, 'Open the tracker'));
+    if (me.practice) kids.push(h('button', { class: 'btn btn-line', type: 'button', onclick: endPractice }, 'Back to the tracker'));
+    else if (me.admin && me.block) kids.push(h('a', { class: 'btn btn-line', href: '#tracker', onclick: function () { S.sheet = null; drawSheet(); } }, 'Open the tracker'));
+    else if (me.admin) kids.push(h('button', { class: 'btn btn-line', type: 'button', onclick: function () { S.sheet = null; startPractice(); } }, 'Try the resident screens'));
     kids.push(h('button', { class: 'btn btn-line', type: 'button', onclick: function () { signedOut(''); } }, 'Sign out'));
     kids.push(h('p', { class: 'note', text: cfg.title + ' · ' + cfg.unit }));
     return { title: 'Your account', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, kids) };
@@ -1112,6 +1171,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     body.appendChild(h('div', { class: 't-title' }, [
       h('div', null, [h('h1', { text: 'Block ' + b.n }), h('p', { text: dm(b.start) + ' to ' + dm(b.end) + ' ' + b.end.slice(0, 4) + ' · ' + when })]),
       h('div', { class: 't-actions' }, [
+        h('button', { class: 'btn btn-line btn-small', type: 'button', disabled: S.busy, onclick: startPractice }, 'Try the resident screens'),
         h('button', { class: 'btn btn-line btn-small', type: 'button', disabled: S.tBusy || !t.totals.wait, onclick: remind }, 'Remind co-signers'),
         h('a', { class: 'btn btn-small', href: t.sheet, target: '_blank', rel: 'noopener' }, 'Open the sheet')
       ])
