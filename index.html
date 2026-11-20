@@ -340,7 +340,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   var boot = (typeof BOOT === 'object' && BOOT) || {};
   var cfg = {
     title: 'PICU Logbook', unit: 'Sultan Qaboos University Hospital · Department of Child Health',
-    prefix: 'Dr ', contact: 'Dr Zahraa', units: ['PICU', 'HDU'], dayStart: 480, dayEnd: 960,
+    prefix: 'Dr ', contact: 'Dr Zahraa', units: ['PICU', 'HDU'], dayStart: 480, dayEnd: 900,
     weekend: [5, 6], offsetMin: 240, countAll: false
   };
   mergeCfg(boot.cfg);
@@ -1245,7 +1245,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
         S.sheet = null; drawSheet(); render();
       } }, [h('span', { text: dr(n) }), n === s.name ? h('small', { text: 'From the rota' }) : null]);
     }));
-    return { title: 'Who was on service?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [h('p', { class: 'note', text: 'The doctor on service co-signs. By day that is the unit’s lead for the week, on call the 4th on call.' }), list]) };
+    return { title: 'Who was on service?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [h('p', { class: 'note', text: 'Choose the doctor who was with you. The rota suggests the unit’s lead for the week by day, and the 4th on call for on-call hours.' }), list]) };
   }
 
   function sheetTeaching() {
