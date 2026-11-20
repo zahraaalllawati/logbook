@@ -562,12 +562,12 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   // ---------------------------------------------------------- signing in
 
   function vSignin() {
-    var input = h('input', { class: 'input', id: 'email', type: 'email', inputmode: 'email', autocomplete: 'email', autocapitalize: 'off', autocorrect: 'off', spellcheck: 'false', placeholder: 'r00000@resident.omsb.org', value: S.email });
+    var input = h('input', { class: 'input', id: 'email', type: 'email', inputmode: 'email', autocomplete: 'email', autocapitalize: 'off', autocorrect: 'off', spellcheck: 'false', placeholder: 'name@example.com', 'aria-describedby': 'email-help', value: S.email });
     var form = h('form', { class: 'gate-form', novalidate: true, onsubmit: function (ev) { ev.preventDefault(); askCode(input.value); } }, [
-      h('div', { class: 'field' }, [h('label', { for: 'email', text: 'Your OMSB email' }), input]),
+      h('div', { class: 'field' }, [h('label', { for: 'email', text: 'Your email' }), input]),
       S.error ? h('p', { class: 'err', role: 'alert', text: S.error }) : null,
       h('button', { class: 'btn', type: 'submit', disabled: S.busy }, S.busy ? 'Sending…' : 'Send me a sign-in code'),
-      h('p', { class: 'note center', text: 'Residents on this block’s PICU and HDU roster can sign in.' })
+      h('p', { class: 'note center', id: 'email-help', text: 'Use the email address your PICU welcome email came to.' })
     ]);
     return h('main', { class: 'gate' }, [
       h('div', { class: 'gate-in' }, [
