@@ -127,14 +127,18 @@ textarea.input { height: auto; min-height: 86px; padding: 12px 16px; resize: ver
 .opt { padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
 .opt b { font-size: 17px; font-weight: 600; }
 .opt span { font-size: 15px; color: var(--soft); }
-.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 26px 16px calc(6px + env(safe-area-inset-bottom)); background: linear-gradient(to bottom, rgba(241, 246, 245, 0), var(--page) 24px); }
-.dock-in { max-width: 528px; margin: 0 auto; display: flex; flex-direction: column; gap: 4px; }
-.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; }
+.dock-in { max-width: 528px; margin: 0 auto; padding: 22px 16px 10px; background: linear-gradient(to bottom, rgba(241, 246, 245, 0), var(--page) 20px); }
 .dock-btns { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 8px; }
 .dock-btns .btn { font-size: 18px; padding: 8px 10px; }
-.tabs a { display: flex; align-items: center; justify-content: center; min-height: 46px; font-size: 17px; font-weight: 600; color: var(--dark); text-decoration: none; border-bottom: 3px solid transparent; }
-.tabs a[aria-current="page"] { color: var(--teal); border-bottom-color: var(--teal); }
-.dock-room { height: 170px; }
+.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 6px max(8px, calc((100% - 528px) / 2)) env(safe-area-inset-bottom); background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(16, 40, 42, .07); }
+.tabs a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 60px; padding: 4px 2px 6px; font-size: 14px; font-weight: 600; letter-spacing: .01em; color: #3F5153; text-decoration: none; }
+.tabs .ti { display: flex; align-items: center; justify-content: center; width: 60px; height: 32px; border-radius: 16px; }
+.tabs .ti svg { width: 25px; height: 25px; }
+.tabs a[aria-current="page"] { color: var(--teal); font-weight: 700; }
+.tabs a[aria-current="page"] .ti { background: var(--mint); }
+.dock-room { height: calc(176px + env(safe-area-inset-bottom)); }
+.saving { min-height: 20px; margin: 2px 0 0; font-size: 15px; color: var(--soft); }
 .link-sm { font-size: 15px; font-weight: 600; color: var(--teal); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
 .rows { padding: 2px 18px; }
 .rrow { display: flex; flex-direction: column; gap: 7px; width: 100%; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; color: inherit; text-decoration: none; }
@@ -395,7 +399,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     if (r.token) { S.token = r.token; save(KEY.token, r.token); }
     if (r.me) {
       S.data = { me: r.me, cfg: r.cfg, procedures: r.procedures || [], cosigners: r.cosigners || [], entries: r.entries || [], days: r.days || {},
-        reading: r.reading || [], ticks: r.ticks || [], teaching: r.teaching || [], teachers: r.teachers || [] };
+        reading: r.reading || [], ticks: withPending(r.ticks || []), teaching: r.teaching || [], teachers: r.teachers || [] };
       save(KEY.data, JSON.stringify(S.data));
     }
     S.lastFetch = Date.now();
@@ -524,6 +528,9 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     check: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     done: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#0B4F53"/><path d="M7 12.5 L10.5 16 L17 8.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     close: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    progress: '<svg viewBox="0 0 24 24"><path d="M5.5 19.5v-6M12 19.5V5M18.5 19.5v-9.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+    book: '<svg viewBox="0 0 24 24"><path d="M12 6.8C10.4 5.3 7.9 4.6 4 4.6v13.2c3.9 0 6.4.7 8 2.2 1.6-1.5 4.1-2.2 8-2.2V4.6c-3.9 0-6.4.7-8 2.2zM12 6.8V20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    list: '<svg viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
     next: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     talk: '<svg viewBox="0 0 24 24"><path d="M5 4h8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9.5L6 16.5V13H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 8H19a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3.5L14.5 17H11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     bed: '<svg viewBox="0 0 24 24"><path d="M3 5.5V19M3 15h18v4M21 15v-2.5A2.5 2.5 0 0 0 18.5 10H11v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="11.5" r="2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -767,7 +774,8 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
 
   function vReading() {
     var tracks = S.data.reading || [];
-    var kids = [h('div', { class: 'page-head' }, [h('h1', { text: 'Reading' }), h('p', { class: 'page-sub', text: 'picuhub.om · tick each module when you finish it' })])];
+    var kids = [h('div', { class: 'page-head' }, [h('h1', { text: 'Reading' }), h('p', { class: 'page-sub', text: 'picuhub.om · tick each module when you finish it' }),
+      h('p', { class: 'saving', 'aria-live': 'polite', text: ticksPending() ? 'Saving your ticks…' : '' })])];
     if (S.readErr) kids.push(h('p', { class: 'err', role: 'alert', text: S.readErr }));
     tracks.forEach(function (t) {
       var d = readCount(t), open = !!S.open[t.name];
@@ -790,17 +798,67 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     return h('div', null, [h('main', { class: 'mylog wrap' }, kids), dock('reading')]);
   }
 
+  // Ticks show at once and are saved in the background: a quick run of taps goes as one request, one request
+  // at a time, and an answer from the server never undoes a tap made after that request left.
+  var TQ = { want: {}, flying: null, timer: 0, tries: 0 };
+
   function tick(track, module, on) {
-    var key = track + ' | ' + module, before = (S.data.ticks || []).slice();
-    S.data.ticks = on ? before.filter(function (k) { return k !== key; }).concat([key]) : before.filter(function (k) { return k !== key; });
+    var key = track + ' | ' + module;
+    setTick(key, on);
+    TQ.want[key] = { track: track, module: module, done: on };
     S.readErr = '';
     render();
-    call('tick', { track: track, module: module, done: on }).then(function (r) {
-      if (r.ok) { S.data.ticks = r.ticks || []; save(KEY.data, JSON.stringify(S.data)); render(); }
-      else if (r.error === 'signed_out') signedOut(r.message);
-      else { S.data.ticks = before; S.readErr = r.message || NET; render(); }
+    clearTimeout(TQ.timer);
+    TQ.timer = setTimeout(flushTicks, 400);
+  }
+
+  function setTick(key, on) {
+    var list = (S.data.ticks || []).filter(function (k) { return k !== key; });
+    if (on) list.push(key);
+    S.data.ticks = list;
+  }
+
+  function ticksPending() { return !!TQ.flying || Object.keys(TQ.want).length > 0; }
+
+  // The server's list, with every tap it has not confirmed yet laid on top.
+  function withPending(list) {
+    var out = (list || []).slice(), p = {}, k;
+    if (TQ.flying) for (k in TQ.flying) p[k] = TQ.flying[k];
+    for (k in TQ.want) p[k] = TQ.want[k];
+    for (k in p) { out = out.filter(function (x) { return x !== k; }); if (p[k].done) out.push(k); }
+    return out;
+  }
+
+  function flushTicks() {
+    clearTimeout(TQ.timer);
+    if (TQ.flying || !Object.keys(TQ.want).length || !S.token) return;
+    TQ.flying = TQ.want; TQ.want = {};
+    var changes = Object.keys(TQ.flying).map(function (k) { return TQ.flying[k]; });
+    call('ticks', { changes: changes }).then(function (r) {
+      var sent = TQ.flying, k;
+      TQ.flying = null;
+      if (r.ok) {
+        TQ.tries = 0;
+        if (S.data) { S.data.ticks = withPending(r.ticks || []); save(KEY.data, JSON.stringify(S.data)); }
+      } else if (r.error === 'signed_out') { TQ.want = {}; signedOut(r.message); return; }
+      else if (TQ.tries < 3) {
+        TQ.tries++;                                   // try again shortly; a newer tap on the same module wins
+        for (k in sent) if (!TQ.want[k]) TQ.want[k] = sent[k];
+        TQ.timer = setTimeout(flushTicks, 2000 * TQ.tries);
+        render();
+        return;
+      } else {
+        TQ.tries = 0;
+        for (k in sent) if (!TQ.want[k] && S.data) setTick(k, !sent[k].done);
+        S.readErr = 'Some ticks were not saved. Check your signal and tap them again.';
+      }
+      if (Object.keys(TQ.want).length) TQ.timer = setTimeout(flushTicks, 150);
+      render();
     });
   }
+
+  // Leaving the app with ticks still to send: send them now.
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && Object.keys(TQ.want).length) flushTicks(); });
 
   // ---------------------------------------------------------- teaching received (co-signed by the doctor who gave it)
 
@@ -966,11 +1024,10 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
         h('button', { class: 'btn', type: 'button', onclick: function () { S.form = null; S.error = ''; location.hash = 'log'; } }, [icon('plus'), 'Log a procedure']),
         h('button', { class: 'btn btn-line', type: 'button', onclick: function () { S.tform = null; S.error = ''; location.hash = 'teach'; } }, 'Add teaching')
       ]) : h('button', { class: 'btn', type: 'button', disabled: true }, 'Logging opens ' + dShort(me.start)),
-      h('div', { class: 'tabs' }, [
-        h('a', { href: '#', 'aria-current': here === 'progress' ? 'page' : null, onclick: function (ev) { ev.preventDefault(); history.pushState(null, '', location.pathname + location.search); S.flash = null; render(); } }, 'Progress'),
-        h('a', { href: '#reading', 'aria-current': here === 'reading' ? 'page' : null }, 'Reading'),
-        h('a', { href: '#mylog', 'aria-current': here === 'mylog' ? 'page' : null }, 'My log')
-      ])
+    ]), h('div', { class: 'tabs' }, [
+      h('a', { href: '#', 'aria-current': here === 'progress' ? 'page' : null, onclick: function (ev) { ev.preventDefault(); history.pushState(null, '', location.pathname + location.search); S.flash = null; render(); } }, [h('span', { class: 'ti', svg: ICON.progress }), h('span', { text: 'Progress' })]),
+      h('a', { href: '#reading', 'aria-current': here === 'reading' ? 'page' : null }, [h('span', { class: 'ti', svg: ICON.book }), h('span', { text: 'Reading' })]),
+      h('a', { href: '#mylog', 'aria-current': here === 'mylog' ? 'page' : null }, [h('span', { class: 'ti', svg: ICON.list }), h('span', { text: 'My log' })])
     ])]);
   }
 
