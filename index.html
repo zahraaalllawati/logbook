@@ -1056,17 +1056,9 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   function nonce() { var s = ''; for (var i = 0; i < 4; i++) s += Math.floor((1 + Math.random()) * 0x10000).toString(16).slice(1); return s + Date.now().toString(36); }
   function procBy(name) { return S.data.procedures.filter(function (p) { return p.name === name; })[0] || null; }
 
-  function suggestion(f) {
-    var s = S.data.days ? S.data.days[f.date] : null, today = nowM().key;
-    if (!s) return { name: '', why: '' };
-    if (f.when === 'call') return { name: s.c || '', why: s.c ? '4th on call ' + (f.date === today ? 'tonight' : 'that night') + ', from the rota' : '' };
-    var n = (s.d && s.d[f.unit]) || '';
-    return { name: n, why: n ? 'On service in ' + f.unit + ' ' + (f.date === today ? 'this week' : 'that week') + ', from the rota' : '' };
-  }
-  function chosen(f) {
-    if (f.picked) return { name: f.cos, why: 'Chosen by you' };
-    return suggestion(f);
-  }
+  // Whoever was with the resident co-signs, with no order among the doctors (Zahraa, 20 Nov), so nobody is
+  // chosen for them: the resident picks the doctor.
+  function chosen(f) { return { name: f.picked ? f.cos : '' }; }
 
   function seg(label, value, options, pick) {
     return h('fieldset', null, [h('legend', { text: label }), h('div', { class: 'seg' }, options.map(function (o) {
@@ -1116,7 +1108,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     if (p && p.cosign) cosBox = h('div', { class: 'field' }, [
       h('span', { class: 'label', text: 'Co-signed by' }),
       h('div', { class: 'cos' }, [
-        h('div', null, c.name ? [h('div', { class: 'cos-n', text: dr(c.name) }), h('div', { class: 'cos-w', text: c.why })] : [h('div', { class: 'cos-n none', text: 'Who was on service?' }), h('div', { class: 'cos-w', text: 'The rota has nobody for this. Choose the doctor.' })]),
+        h('div', null, c.name ? [h('div', { class: 'cos-n', text: dr(c.name) }), h('div', { class: 'cos-w', text: 'Gets an email to co-sign it' })] : [h('div', { class: 'cos-n none', text: 'Who was with you?' }), h('div', { class: 'cos-w', text: 'Choose the doctor who was with you.' })]),
         h('button', { class: 'cos-btn', type: 'button', onclick: function () { S.sheet = { kind: 'cosigner' }; drawSheet(); } }, c.name ? 'Change' : 'Choose')
       ])
     ]);
@@ -1130,7 +1122,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
       h('p', { class: 'hint', id: 'note-help', style: 'margin-top:0', text: 'No patient names or hospital numbers.' })
     ]);
 
-    var label = !p ? 'Choose a procedure' : p.cosign ? (c && c.name ? 'Send to ' + dr(c.name) + ' to co-sign' : 'Choose who was on service') : 'Save to my log';
+    var label = !p ? 'Choose a procedure' : p.cosign ? (c && c.name ? 'Send to ' + dr(c.name) + ' to co-sign' : 'Choose who was with you') : 'Save to my log';
     var ready = !!p && (!p.cosign || !!(c && c.name));
     var end = h('div', { class: 'form-end' }, [
       S.error ? h('p', { class: 'err', role: 'alert', text: S.error }) : null,
@@ -1236,16 +1228,14 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
   function sheetCosigner() {
     var f = S.form;
     if (!f) return null;
-    var s = suggestion(f), cur = chosen(f).name;
-    var names = S.data.cosigners.slice();
-    if (s.name) names = [s.name].concat(names.filter(function (n) { return n !== s.name; }));
-    var list = h('div', { class: 'pick' }, names.map(function (n) {
+    var cur = chosen(f).name;
+    var list = h('div', { class: 'pick' }, S.data.cosigners.map(function (n) {
       return h('button', { type: 'button', 'aria-pressed': n === cur ? 'true' : 'false', onclick: function () {
-        if (n === s.name) { f.picked = false; f.cos = ''; } else { f.picked = true; f.cos = n; }
+        f.picked = true; f.cos = n;
         S.sheet = null; drawSheet(); render();
-      } }, [h('span', { text: dr(n) }), n === s.name ? h('small', { text: 'From the rota' }) : null]);
+      } }, [h('span', { text: dr(n) })]);
     }));
-    return { title: 'Who was on service?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [h('p', { class: 'note', text: 'Choose the doctor who was with you. The rota suggests the unit’s lead for the week by day, and the 4th on call for on-call hours.' }), list]) };
+    return { title: 'Who was with you?', content: h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [h('p', { class: 'note', text: 'Choose the doctor who was with you. They get an email to co-sign it.' }), list]) };
   }
 
   function sheetTeaching() {
