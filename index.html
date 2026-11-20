@@ -369,16 +369,22 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
 
   // ---------------------------------------------------------- talking to the script
 
+  // Each request as it leaves, and each batch of ticks once saved, takes the next number. An answer can then
+  // tell whether ticks were saved after its request left, and so whether its own list of ticks is behind.
+  var EV = 0;
   function call(op, extra) {
     var body = { op: op, token: S.token };
     if (extra) for (var k in extra) body[k] = extra[k];
+    var sent = ++EV;
     return new Promise(function (resolve) {
       var done = function (text) {
         var r = null;
         try { r = typeof text === 'string' ? JSON.parse(text) : text; } catch (e) { r = null; }
-        resolve(r && typeof r === 'object' ? r : { ok: false, error: 'network', message: NET });
+        r = r && typeof r === 'object' ? r : { ok: false, error: 'network', message: NET };
+        r._sent = sent;
+        resolve(r);
       };
-      var lost = function () { resolve({ ok: false, error: 'network', message: NET }); };
+      var lost = function () { resolve({ ok: false, error: 'network', message: NET, _sent: sent }); };
       if (canRun) { google.script.run.withSuccessHandler(done).withFailureHandler(lost).api(JSON.stringify(body)); return; }
       if (!api) { lost(); return; }
       var x = new XMLHttpRequest();
@@ -398,8 +404,11 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     if (r.cfg) mergeCfg(r.cfg);
     if (r.token) { S.token = r.token; save(KEY.token, r.token); }
     if (r.me) {
+      // Ticks saved after this request left are newer than the list it brings back, so the phone's list stays.
+      var same = !!(S.data && S.data.me && S.data.me.email === r.me.email && !!S.data.me.practice === !!r.me.practice);
+      var ticks = withPending(same && TQ.savedAt > (r._sent || 0) ? (S.data.ticks || []) : (r.ticks || []));
       S.data = { me: r.me, cfg: r.cfg, procedures: r.procedures || [], cosigners: r.cosigners || [], entries: r.entries || [], days: r.days || {},
-        reading: r.reading || [], ticks: withPending(r.ticks || []), teaching: r.teaching || [], teachers: r.teachers || [] };
+        reading: r.reading || [], ticks: ticks, teaching: r.teaching || [], teachers: r.teachers || [] };
       save(KEY.data, JSON.stringify(S.data));
     }
     S.lastFetch = Date.now();
@@ -800,7 +809,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
 
   // Ticks show at once and are saved in the background: a quick run of taps goes as one request, one request
   // at a time, and an answer from the server never undoes a tap made after that request left.
-  var TQ = { want: {}, flying: null, timer: 0, tries: 0 };
+  var TQ = { want: {}, flying: null, timer: 0, tries: 0, savedAt: 0 };
 
   function tick(track, module, on) {
     var key = track + ' | ' + module;
@@ -839,6 +848,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
       TQ.flying = null;
       if (r.ok) {
         TQ.tries = 0;
+        TQ.savedAt = ++EV;
         if (S.data) { S.data.ticks = withPending(r.ticks || []); save(KEY.data, JSON.stringify(S.data)); }
       } else if (r.error === 'signed_out') { TQ.want = {}; signedOut(r.message); return; }
       else if (TQ.tries < 3) {
@@ -946,7 +956,7 @@ table.t { width: 100%; min-width: 700px; border-collapse: collapse; }
     var ready = !!(f.type && String(f.topic).trim() && f.by);
     var label = !f.type ? 'Choose the kind of teaching' : !String(f.topic).trim() ? 'Choose the topic' : !f.by ? 'Choose who taught you' : 'Send to ' + dr(f.by) + ' to co-sign';
     return h('main', { class: 'wrap' }, [h('form', { class: 'page', novalidate: true, onsubmit: function (ev) { ev.preventDefault(); sendTeach(); } }, [
-      head, kindSet, topicSet, bySet, dateSet, noteSet,
+      head, kindSet, topicSet, dateSet, bySet, noteSet,
       h('div', { class: 'form-end' }, [S.error ? h('p', { class: 'err', role: 'alert', text: S.error }) : null,
         h('button', { class: 'btn', type: 'submit', disabled: !ready || S.busy }, S.busy ? 'Sending…' : label)])
     ])]);
